@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News-Portal</title>
+    <!-- Bootstrap CDN goes here -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <style>
+        a:hover {
+            text-decoration: underline black 1.5px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #e3dfdf" onload="fetchCategories()">
+    <header class="container-fluid m-0 p-0">
+
+        <!-- Navbar goes here -->
+        <nav class="navbar navbar-expand-lg bg-transparent">
+            <div class="container">
+                <a class="navbar-brand" href="#"><button class="btn btn-primary rounded-2">News</button> Portal</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-link hover:bg-danger" aria-current="page" href="#">News</a>
+                        <a class="nav-link" href="#">Blogs</a>
+                        <a class="nav-link" href="#"><img src="./assets/Avatar.png" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <hr class="container mb-4" />
+
+        <!-- News Categories section starts-->
+        <section class="container categories-container d-flex justify-content-between" id="categories-container">
+        </section>
+        <!-- News Categories section ends -->
+    </header>
+
+    <!-- main starts here -->
+    <main>
+        <!-- alert section starts here -->
+        <section class="container">
+            <div class="alert alert-light mt-4 px-4" role="alert">
+                <span id="news-count">0</span> items found for category "<span id="category-name">No Category Clicked yet</span>"
+            </div>
+        </section>
+        <!-- alert section ends here -->
+    </main>
+    <!-- main ends here -->
+
+    <!-- Bootstrap Script goes here -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <!-- Custom JavaScript goes here -->
+    <script src="./scripts/news-portal.js"></script>
+</body>
+
+</html>

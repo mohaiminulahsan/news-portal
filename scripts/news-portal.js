@@ -1,3 +1,5 @@
+let fetchData = [];
+
 const fetchCategories = () => {
     fetch('https://openapi.programming-hero.com/api/news/categories')
         .then(response => response.json())
@@ -31,7 +33,10 @@ const showCategories = data => {
 const fetchCategoryNews = (category_id, category_name) => {
     const url = `https://openapi.programming-hero.com/api/news/category/${category_id}`;
     // console.log(url);
-    fetch(url).then(response => response.json()).then(data => showAllNews(data?.data, category_name));
+    fetch(url).then(response => response.json()).then(data => {
+        fetchData = data.data;
+        showAllNews(data?.data, category_name)
+    });
 };
 
 const showAllNews = (data, category_name) => {
@@ -42,13 +47,14 @@ const showAllNews = (data, category_name) => {
     const newsContainer = document.getElementById('all-news');
     newsContainer.innerHTML = '';
     data.forEach(singleNews => {
-        const {image_url, title, details, author, total_view} = singleNews;
+        const { _id, image_url, title, details, author, total_view } = singleNews;
+        const dateFormatting = date(author.published_date);
         // console.log(singleNews);
         // newsContainer.innerHTML += ``
         const card = document.createElement('div');
         card.classList.add('card', 'mb-3');
-        card.innerHTML = 
-        `<div class="row g-2">
+        card.innerHTML =
+            `<div class="row g-2">
             <div class="col-md-4">
                 <img src="${image_url}" class="m-2 img-fluid rounded-start" alt="...">
             </div>
@@ -62,13 +68,13 @@ const showAllNews = (data, category_name) => {
                     <div class="d-flex gap-1">
                         <img src="${author.img}" class="m-2 img-fluid rounded-circle" alt="..." height="40" width="40">
                         <div>
-                            <p class="m-0 p-0">${author.name}</p>
-                            <p class="m-0 p-0">${author.published_date}</p>
+                            <p class="m-0 p-0">${author.name ? author.name : "Not Available"}</p>
+                            <p class="m-0 p-0">${dateFormatting}</p>
                         </div>
                     </div>
                     <div class="d-flex gap-2 align-items-center">
                         <i class="fa-solid fa-eye"></i>
-                        <p class="m-0 p-0">${total_view}</p>
+                        <p class="m-0 p-0">${total_view ? total_view : "Not Available"}</p>
                     </div>
                     <div>
                         <i class="fa-solid fa-star"></i>
@@ -78,7 +84,7 @@ const showAllNews = (data, category_name) => {
                         <i class="fa-regular fa-star"></i>
                     </div>
                     <div>
-                        <i class="fs-5 text-primary fa-solid fa-arrow-right"></i>
+                        <i class="fs-5 text-primary fa-solid fa-arrow-right" onclick="fetchNewsDetails('${_id}')" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
                     </div>
                 </div>
             </div>
@@ -86,3 +92,88 @@ const showAllNews = (data, category_name) => {
         newsContainer.appendChild(card);
     })
 };
+
+const fetchNewsDetails = news_id => {
+    let url = `https://openapi.programming-hero.com/api/news/${news_id}`;
+    // console.log(url);
+    fetch(url).then(response => response.json()).then(data => showNewsDetails(data.data[0]));
+};
+
+/* date formatting */
+function date (givenDate){
+    const dateGiven = new Date(givenDate);
+    
+    const month_name = function (monthNo) {
+        monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return monthList[monthNo.getMonth()];
+    }
+    const month = month_name(dateGiven) ;
+    const date = dateGiven.getDate();
+    const year = dateGiven.getFullYear();
+    // console.log(month, date, year);
+    return month + " " + date + "," + " " + year;
+    };
+
+    const showNewsDetails = newsDetails => {
+        // const modalContainer = document.getElementById('modal-body');
+        // console.log(newsDetails);
+        const { _id, image_url, title, details, author, total_view, others_info } = newsDetails;
+        // console.log(singleNews);
+        // newsContainer.innerHTML += ``
+        const dateFormatting = date(author.published_date);
+        document.getElementById('modal-body').innerHTML = `
+            <div class="card mb-3">
+                <div class="row g-2">
+                    <div class="col-md-12">
+                        <img src="${image_url}" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="d-flex flex-column col-md-12">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold">${title} <span class="badge text-bg-warning">${others_info.is_trending ? "Trending" : ""}</span> </h5>
+                            <p class="card-text">${details}</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center card-footer border-0 bg-body">
+                        <div class="d-flex gap-1">
+                            <img src="${author.img}" class="m-2 img-fluid rounded-circle" alt="..." height="40" width="40">
+                            <div>
+                                <p class="m-0 p-0">${author.name ? author.name : "Not Available"}</p>
+                                <p class="m-0 p-0">${dateFormatting}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <i class="fa-solid fa-eye"></i>
+                            <p class="m-0 p-0">${total_view ? total_view : "None"}</p>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    // show trending news
+    const showTrending = () =>{
+        // console.log(fetchData);
+        const trendingNews = fetchData.filter(singleData => singleData.others_info.is_trending === true);
+        // console.log(trendingNews);
+        const category_name = document.getElementById("category-name").innerText;
+        showAllNews(trendingNews, category_name);
+    };
+
+    const showTodaysPick = () =>{
+        
+    }
+
+
+/*  OR operator: || - if left side is false then right side will be executed */
+/* AND operator: && - if left side is true  then right side will be executed */
+/* ternary operator: '?', ':' - shortcut to if-else 
+    condition ? "execute for truth" : "execute for false"
+*/

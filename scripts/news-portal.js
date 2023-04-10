@@ -47,7 +47,7 @@ const showAllNews = (data, category_name) => {
     const newsContainer = document.getElementById('all-news');
     newsContainer.innerHTML = '';
     data.forEach(singleNews => {
-        const { _id, image_url, title, details, author, total_view } = singleNews;
+        const { _id, image_url, title, details, author, total_view, rating } = singleNews;
         const dateFormatting = date(author.published_date);
         // console.log(singleNews);
         // newsContainer.innerHTML += ``
@@ -77,11 +77,8 @@ const showAllNews = (data, category_name) => {
                         <p class="m-0 p-0">${total_view ? total_view : "Not Available"}</p>
                     </div>
                     <div>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-stroke"></i>
-                        <i class="fa-regular fa-star"></i>
+                        ${ratingStars(rating.number)}
+                        <span>${rating.number}</span>
                     </div>
                     <div>
                         <i class="fs-5 text-primary fa-solid fa-arrow-right" onclick="fetchNewsDetails('${_id}')" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
@@ -129,7 +126,10 @@ function date (givenDate){
                     </div>
                     <div class="d-flex flex-column col-md-12">
                         <div class="card-body">
-                            <h5 class="card-title fw-semibold">${title} <span class="badge text-bg-warning">${others_info.is_trending ? "Trending" : ""}</span> </h5>
+                            <h5 class="card-title fw-semibold">${title} 
+                                <span class="badge text-bg-warning">${others_info.is_trending ? "Trending" : ""}</span> 
+                                <span class="badge text-bg-primary">${others_info.is_todays_pick ? "Today's Pick" : ""}</span> 
+                            </h5>
                             <p class="card-text">${details}</p>
                         </div>
 
@@ -149,8 +149,8 @@ function date (givenDate){
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star-half-stroke"></i>
-                            <i class="fa-regular fa-star"></i>
                         </div>
                     </div>
                 </div>
@@ -168,7 +168,23 @@ function date (givenDate){
     };
 
     const showTodaysPick = () =>{
-        
+        const todaysPickNews = fetchData.filter(singleData => singleData.others_info.is_todays_pick === true);
+        console.log(todaysPickNews);
+        const category_name = document.getElementById("category-name").innerText;
+        showAllNews(todaysPickNews, category_name);
+    }
+
+    // Total Optional
+    // Generate Stars according to Ratings
+    const ratingStars = rating =>{
+        let ratingStars = '';
+        for (let i = 1; i <= Math.floor(rating); i++) {
+            ratingStars += `<i class="fa-solid fa-star"></i>`;
+        };
+        if(rating - Math.floor(rating)>0){
+            ratingStars += `<i class="fa-solid fa-star-half-stroke"></i>`;
+        };
+        return ratingStars;
     }
 
 
